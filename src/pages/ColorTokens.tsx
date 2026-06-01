@@ -110,7 +110,7 @@ export default function ColorTokens() {
         <div className="grid grid-cols-6 sm:grid-cols-11 gap-1 mt-3">
           {STOPS.map((s) => (
             <input key={s} value={scale[s]}
-              onChange={(e) => setScale((p) => (p ? { ...p, [s]: e.target.value } : null))}
+              onChange={(e) => setScale((p) => ({ ...p, [s]: e.target.value }))}
               className="w-full px-1 py-1 text-[9px] font-mono rounded border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 text-center focus:outline-none focus:border-indigo-400" />
           ))}
         </div>
