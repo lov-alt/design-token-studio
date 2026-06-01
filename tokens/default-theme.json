@@ -1,0 +1,50 @@
+{
+  "$schema": "https://tr.designtokens.org/format/",
+  "name": "default-theme",
+  "version": "1.0.0",
+  "color": {
+    "primary": { "$type": "color", "$value": { "light": "#6366f1", "dark": "#818cf8" } },
+    "primary-hover": { "$type": "color", "$value": { "light": "#4f46e5", "dark": "#6366f1" } },
+    "primary-light": { "$type": "color", "$value": { "light": "#eef2ff", "dark": "#1e1b4b" } },
+    "secondary": { "$type": "color", "$value": { "light": "#ec4899", "dark": "#f472b6" } },
+    "surface": { "$type": "color", "$value": { "light": "#ffffff", "dark": "#0f0f1a" } },
+    "surface-alt": { "$type": "color", "$value": { "light": "#f8fafc", "dark": "#1a1a2e" } },
+    "text": { "$type": "color", "$value": { "light": "#18181b", "dark": "#f4f4f5" } },
+    "text-secondary": { "$type": "color", "$value": { "light": "#71717a", "dark": "#a1a1aa" } },
+    "border": { "$type": "color", "$value": { "light": "#e4e4e7", "dark": "#27272a" } },
+    "success": { "$type": "color", "$value": { "light": "#22c55e", "dark": "#4ade80" } },
+    "warning": { "$type": "color", "$value": { "light": "#f59e0b", "dark": "#fbbf24" } },
+    "error": { "$type": "color", "$value": { "light": "#ef4444", "dark": "#f87171" } },
+    "info": { "$type": "color", "$value": { "light": "#3b82f6", "dark": "#60a5fa" } }
+  },
+  "typography": {
+    "h1": { "$type": "typography", "$value": { "fontFamily": "Inter, sans-serif", "fontSize": "2.5rem", "fontWeight": 700, "lineHeight": 1.2, "letterSpacing": "-0.02em" } },
+    "h2": { "$type": "typography", "$value": { "fontFamily": "Inter, sans-serif", "fontSize": "2rem", "fontWeight": 700, "lineHeight": 1.25, "letterSpacing": "-0.015em" } },
+    "h3": { "$type": "typography", "$value": { "fontFamily": "Inter, sans-serif", "fontSize": "1.5rem", "fontWeight": 600, "lineHeight": 1.3, "letterSpacing": "-0.01em" } },
+    "body": { "$type": "typography", "$value": { "fontFamily": "Inter, sans-serif", "fontSize": "1rem", "fontWeight": 400, "lineHeight": 1.6, "letterSpacing": "0" } },
+    "body-small": { "$type": "typography", "$value": { "fontFamily": "Inter, sans-serif", "fontSize": "0.875rem", "fontWeight": 400, "lineHeight": 1.5, "letterSpacing": "0" } },
+    "caption": { "$type": "typography", "$value": { "fontFamily": "Inter, sans-serif", "fontSize": "0.75rem", "fontWeight": 400, "lineHeight": 1.4, "letterSpacing": "0.01em" } }
+  },
+  "spacing": {
+    "xs": { "$type": "dimension", "$value": "0.25rem" },
+    "sm": { "$type": "dimension", "$value": "0.5rem" },
+    "md": { "$type": "dimension", "$value": "1rem" },
+    "lg": { "$type": "dimension", "$value": "1.5rem" },
+    "xl": { "$type": "dimension", "$value": "2rem" },
+    "2xl": { "$type": "dimension", "$value": "3rem" },
+    "3xl": { "$type": "dimension", "$value": "4rem" },
+    "4xl": { "$type": "dimension", "$value": "6rem" }
+  },
+  "shadow": {
+    "sm": { "$type": "shadow", "$value": "0 1px 2px 0 rgb(0 0 0 / 0.05)" },
+    "md": { "$type": "shadow", "$value": "0 4px 6px -1px rgb(0 0 0 / 0.1)" },
+    "lg": { "$type": "shadow", "$value": "0 10px 15px -3px rgb(0 0 0 / 0.1)" },
+    "xl": { "$type": "shadow", "$value": "0 20px 25px -5px rgb(0 0 0 / 0.1)" }
+  },
+  "borderRadius": {
+    "sm": { "$type": "borderRadius", "$value": "0.25rem" },
+    "md": { "$type": "borderRadius", "$value": "0.5rem" },
+    "lg": { "$type": "borderRadius", "$value": "0.75rem" },
+    "xl": { "$type": "borderRadius", "$value": "1rem" }
+  }
+}
