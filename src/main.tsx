@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createHashRouter, RouterProvider } from "react-router-dom";
 import { createRoot } from "react-dom/client";
 import { I18nProvider } from "./i18n/index";
 import App from "./App";
@@ -9,7 +9,7 @@ import SpacingTokens from "./pages/SpacingTokens";
 import AccessiblePage from "./pages/AccessiblePage";
 import ExportPage from "./pages/ExportPage";
 
-const router = createBrowserRouter([{
+const router = createHashRouter([{
   path: "/",
   element: <App />,
   children: [
