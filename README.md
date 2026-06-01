@@ -132,4 +132,4 @@ React 19 · TypeScript · Vite · Tailwind CSS v4 · React Router · W3C DTCG
 
 ## License
 
-MIT
+[MIT](./LICENSE) © 2026 lov-alt — Use freely, modify freely, distribute freely. Software provided "as is", without warranty of any kind.
