@@ -114,15 +114,15 @@ Or use it instantly at **[lov-alt.github.io/design-token-studio](https://lov-alt
 
 ## Ecosystem
 
-Design Token Studio is the design-source layer. It pairs with two other open-source tools:
+Design Token Studio is part of a five-tool open-source suite for the full design-to-code pipeline:
 
-```
-Design Token Studio        CSS Visual Toolbox        Typography Lab
-(define the system)   →    (edit CSS visually)   →   (generate layouts)
-```
-
-- **[CSS Visual Toolbox](https://github.com/lov-alt/css-visual-toolbox)** — Visual editor for clip-path, gradients, shadows, border-radius. Export to CSS / Tailwind / React / Vue / Svelte / SwiftUI / Flutter.
-- **[Typography Lab](https://github.com/lov-alt/typography-lab)** — Content-driven layout generator. 14 archetypes, 8 typographic traditions, drag-and-drop canvas, local font import, image editing with 16 blend modes.
+| Tool | What it does |
+|---|---|
+| **Design Token Studio** ← you are here | Define design tokens — colors, typography, spacing — with WCAG checker |
+| **[CSS Visual Toolbox](https://github.com/lov-alt/css-visual-toolbox)** | Visually edit CSS properties (clip-path, gradients, shadows, border-radius) |
+| **[Typography Lab](https://github.com/lov-alt/typography-lab)** | Content-driven layout generator — 14 archetypes, 8 typographic traditions |
+| **[Motion Token Studio](https://github.com/lov-alt/motion-token-studio)** | Design motion tokens — cubic-bezier editor, duration scale, 12 presets |
+| **[Sound Garden](https://github.com/lov-alt/sound-garden)** | Real-time microphone → generative visual landscape |
 
 ---
 
