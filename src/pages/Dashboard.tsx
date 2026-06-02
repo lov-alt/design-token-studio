@@ -1,57 +1,48 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createDefaultStore } from "../data/tokens";
 
-const modules = [
-  { path: "/colors", label: "Colors", icon: "◉", desc: "Brand colors, semantic tokens, tonal scales", color: "from-indigo-500 to-violet-500" },
-  { path: "/typography", label: "Typography", icon: "T", desc: "Font families, type scale, responsive sizes", color: "from-emerald-500 to-teal-500" },
-  { path: "/spacing", label: "Spacing", icon: "↔", desc: "Spacing scale, shadows, border radius", color: "from-amber-500 to-orange-500" },
-  { path: "/accessible", label: "Accessibility", icon: "♿", desc: "Contrast check, color-blind simulation, audit", color: "from-rose-500 to-pink-500" },
-  { path: "/export", label: "Export", icon: "↓", desc: "CSS, Tailwind, SCSS, JSON, SwiftUI, Flutter", color: "from-sky-500 to-cyan-500" },
+const SECTIONS = [
+  { path: "/colors", label: "Colors", icon: "◉", color: "bg-indigo-500", desc: "Brand wizard · Tonal scale · Semantic tokens · Dark theme · Image extraction" },
+  { path: "/typography", label: "Typography", icon: "T", color: "bg-emerald-500", desc: "6-level type scale editor — font family, size, weight, spacing" },
+  { path: "/spacing", label: "Spacing & Effects", icon: "↔", color: "bg-amber-500", desc: "Spacing scale · Shadow elevations with preview · Border radius" },
+  { path: "/accessible", label: "Accessibility", icon: "♿", color: "bg-rose-500", desc: "WCAG contrast checker · CVD simulation · Palette audit" },
+  { path: "/export", label: "Export", icon: "↓", color: "bg-sky-500", desc: "CSS · Tailwind · SCSS · JSON · SwiftUI · Flutter" },
 ];
 
 export default function Dashboard() {
-  const [store] = useState(() => createDefaultStore());
+  const store = createDefaultStore();
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12">
-      <div className="mb-10">
-        <h1 className="text-3xl font-light tracking-tight text-zinc-900 dark:text-zinc-100 mb-2">
-          {store.name}
-        </h1>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          {store.colors.length} colors · {store.typography.length} type styles · {Object.keys(store.spacing).length} spacing tokens
-        </p>
-      </div>
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 md:py-12">
+      <h1 className="text-2xl font-light tracking-tight text-zinc-900 dark:text-zinc-100 mb-2">
+        Design Token Studio
+      </h1>
+      <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-10">
+        {store.colors.length} colors · {store.typography.length} type styles · {Object.keys(store.spacing).length} spacing tokens
+      </p>
 
-      {/* Quick color preview */}
-      <div className="mb-10">
-        <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3">Color Palette</h2>
-        <div className="flex gap-2 flex-wrap">
-          {store.colors.slice(0, 13).map((c) => (
-            <div key={c.id} className="group relative">
-              <div className="w-10 h-10 rounded-xl shadow-sm border border-zinc-200/50 dark:border-zinc-800/50 transition-transform hover:scale-110"
-                style={{ background: c.lightValue }} />
-              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[9px] text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                {c.name}
-              </div>
-            </div>
-          ))}
-        </div>
+      {/* Color preview */}
+      <h2 className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider mb-3">Colors</h2>
+      <div className="flex gap-2 flex-wrap mb-10">
+        {store.colors.map((c) => (
+          <div key={c.id} className="flex flex-col items-center gap-1">
+            <div className="w-10 h-10 rounded-xl border border-zinc-200/60 dark:border-zinc-800/60 shadow-sm hover:scale-110 transition-transform"
+              style={{ background: c.lightValue }} />
+            <span className="text-[9px] text-zinc-400">{c.name}</span>
+          </div>
+        ))}
       </div>
 
       {/* Module cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {modules.map((m) => (
+        {SECTIONS.map((m) => (
           <Link key={m.path} to={m.path}
-            className="group flex gap-4 p-5 rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900/60 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
-            <div className={`w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br ${m.color} flex items-center justify-center text-white font-bold text-lg shadow-sm`}>
+            className="flex items-start gap-4 p-5 rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900/60 hover:shadow-lg hover:-translate-y-0.5 transition-all">
+            <div className={`w-10 h-10 shrink-0 rounded-xl ${m.color} flex items-center justify-center text-white font-bold text-lg shadow-sm`}>
               {m.icon}
             </div>
             <div>
-              <h3 className="font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                {m.label}
-              </h3>
+              <h3 className="font-medium text-sm text-zinc-900 dark:text-zinc-100">{m.label}</h3>
               <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{m.desc}</p>
             </div>
           </Link>
