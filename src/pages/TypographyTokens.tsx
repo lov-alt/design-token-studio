@@ -1,75 +1,48 @@
 import { useState } from "react";
 import { createDefaultStore } from "../data/tokens";
-import { useI18n } from "../i18n/index";
 
 const FIELDS = [
-  { key: "fontFamily" as const, label: "Font Family", w: "col-span-4" },
-  { key: "fontSize" as const, label: "Size", w: "col-span-2" },
-  { key: "fontWeight" as const, label: "Weight", w: "col-span-2" },
-  { key: "lineHeight" as const, label: "Leading", w: "col-span-2" },
-  { key: "letterSpacing" as const, label: "Tracking", w: "col-span-2" },
+  { key: "fontFamily" as const, label: "Font Family", w: "1fr" },
+  { key: "fontSize" as const, label: "Size", w: "90px" },
+  { key: "fontWeight" as const, label: "Weight", w: "70px" },
+  { key: "lineHeight" as const, label: "Leading", w: "70px" },
+  { key: "letterSpacing" as const, label: "Tracking", w: "80px" },
 ];
 
 export default function TypographyTokens() {
-  const { t } = useI18n();
   const [store, setStore] = useState(createDefaultStore);
 
   const update = (id: string, field: string, val: string | number) => {
-    setStore((s) => ({
-      ...s,
-      typography: s.typography.map((ty) => (ty.id === id ? { ...ty, [field]: val } : ty)),
-    }));
+    setStore((s) => ({ ...s, typography: s.typography.map((ty) => (ty.id === id ? { ...ty, [field]: val } : ty)) }));
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-10">
-      <div className="mb-8">
-        <h1 className="text-2xl font-light tracking-tight text-zinc-900 dark:text-zinc-100 mb-1">{t.typography.title}</h1>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">{t.typography.desc}</p>
-      </div>
+    <div style={{ maxWidth: 960, margin: "0 auto", padding: 48 }}>
+      <h1 style={{ fontSize: 22, fontWeight: 300, color: "#f4f4f5", margin: "0 0 4px" }}>Typography Tokens</h1>
+      <p style={{ fontSize: 12, color: "#71717a", margin: "0 0 32px" }}>Font families, type scale, weights, line height, letter spacing</p>
 
-      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden">
-        {/* Table header */}
-        <div className="grid grid-cols-12 gap-2 px-6 py-3 bg-zinc-50 dark:bg-zinc-800/50 border-b border-zinc-200 dark:border-zinc-800 text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">
-          <div className="col-span-2">Role</div>
-          {FIELDS.map((f) => <div key={f.key} className={f.w}>{f.label}</div>)}
+      <div style={{ borderRadius: 16, border: "1px solid #27272a", overflow: "hidden" }}>
+        <div style={{ display: "grid", gridTemplateColumns: `120px repeat(${FIELDS.length}, 1fr)`, gap: 8, padding: "12px 20px", background: "rgba(255,255,255,0.02)", borderBottom: "1px solid #27272a" }}>
+          <span style={{ fontSize: 10, fontWeight: 600, color: "#52525b", textTransform: "uppercase", letterSpacing: "0.1em" }}>Role</span>
+          {FIELDS.map((f) => <span key={f.key} style={{ fontSize: 10, fontWeight: 600, color: "#52525b", textTransform: "uppercase", letterSpacing: "0.1em" }}>{f.label}</span>)}
         </div>
 
-        {/* Table body */}
         {store.typography.map((ty) => (
-          <div key={ty.id} className="grid grid-cols-12 gap-2 px-6 py-4 border-b border-zinc-100 dark:border-zinc-800 items-center hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30 transition-colors">
-            <div className="col-span-2">
-              <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{ty.role}</p>
-              <p className="text-[10px] text-zinc-400">{ty.name}</p>
+          <div key={ty.id} style={{ display: "grid", gridTemplateColumns: `120px repeat(${FIELDS.length}, 1fr)`, gap: 8, padding: "14px 20px", borderBottom: "1px solid #27272a22", alignItems: "center" }}>
+            <div>
+              <div style={{ fontSize: 13, color: "#e4e4e7", fontWeight: 500 }}>{ty.role}</div>
+              <div style={{ fontSize: 10, color: "#52525b", fontFamily: "monospace" }}>{ty.name}</div>
             </div>
-            <input
-              value={ty.fontFamily}
-              onChange={(e) => update(ty.id, "fontFamily", e.target.value)}
-              className="col-span-4 px-2 py-1.5 text-xs rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800/50 text-zinc-700 dark:text-zinc-300 focus:outline-none focus:border-indigo-400"
-            />
-            <input
-              value={ty.fontSize}
-              onChange={(e) => update(ty.id, "fontSize", e.target.value)}
-              className="col-span-2 px-2 py-1.5 text-xs font-mono rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800/50 text-zinc-700 dark:text-zinc-300 focus:outline-none focus:border-indigo-400"
-            />
-            <input
-              type="number"
-              value={ty.fontWeight}
-              onChange={(e) => update(ty.id, "fontWeight", Number(e.target.value))}
-              className="col-span-2 px-2 py-1.5 text-xs font-mono rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800/50 text-zinc-700 dark:text-zinc-300 focus:outline-none focus:border-indigo-400"
-            />
-            <input
-              type="number"
-              step={0.1}
-              value={ty.lineHeight}
-              onChange={(e) => update(ty.id, "lineHeight", Number(e.target.value))}
-              className="col-span-2 px-2 py-1.5 text-xs font-mono rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800/50 text-zinc-700 dark:text-zinc-300 focus:outline-none focus:border-indigo-400"
-            />
-            <input
-              value={ty.letterSpacing}
-              onChange={(e) => update(ty.id, "letterSpacing", e.target.value)}
-              className="col-span-2 px-2 py-1.5 text-xs font-mono rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800/50 text-zinc-700 dark:text-zinc-300 focus:outline-none focus:border-indigo-400"
-            />
+            <input value={ty.fontFamily} onChange={(e) => update(ty.id, "fontFamily", e.target.value)}
+              style={{ padding: "6px 8px", fontSize: 11, borderRadius: 8, border: "1px solid #27272a", background: "transparent", color: "#e4e4e7", outline: "none", fontFamily: "monospace" }} />
+            <input value={ty.fontSize} onChange={(e) => update(ty.id, "fontSize", e.target.value)}
+              style={{ padding: "6px 8px", fontSize: 11, borderRadius: 8, border: "1px solid #27272a", background: "transparent", color: "#e4e4e7", outline: "none", fontFamily: "monospace", textAlign: "center" }} />
+            <input type="number" value={ty.fontWeight} onChange={(e) => update(ty.id, "fontWeight", Number(e.target.value))}
+              style={{ padding: "6px 8px", fontSize: 11, borderRadius: 8, border: "1px solid #27272a", background: "transparent", color: "#e4e4e7", outline: "none", fontFamily: "monospace", textAlign: "center" }} />
+            <input type="number" step={0.1} value={ty.lineHeight} onChange={(e) => update(ty.id, "lineHeight", Number(e.target.value))}
+              style={{ padding: "6px 8px", fontSize: 11, borderRadius: 8, border: "1px solid #27272a", background: "transparent", color: "#e4e4e7", outline: "none", fontFamily: "monospace", textAlign: "center" }} />
+            <input value={ty.letterSpacing} onChange={(e) => update(ty.id, "letterSpacing", e.target.value)}
+              style={{ padding: "6px 8px", fontSize: 11, borderRadius: 8, border: "1px solid #27272a", background: "transparent", color: "#e4e4e7", outline: "none", fontFamily: "monospace", textAlign: "center" }} />
           </div>
         ))}
       </div>

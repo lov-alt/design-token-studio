@@ -1,76 +1,72 @@
 import { useState } from "react";
 import { createDefaultStore } from "../data/tokens";
-import { useI18n } from "../i18n/index";
 
-const SHADOW_PREVIEWS: Record<string, string> = {
-  sm: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
-  md: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
-  lg: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
-  xl: "0 20px 25px -5px rgb(0 0 0 / 0.1)",
+const cardStyle: React.CSSProperties = {
+  borderRadius: 16, border: "1px solid #27272a",
+  padding: 24, background: "linear-gradient(135deg, #18181b, #1e1e2e)",
+  marginBottom: 20,
 };
 
+const labelStyle: React.CSSProperties = { fontSize: 10, fontWeight: 600, color: "#52525b", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 16 };
+const inputStyle: React.CSSProperties = { padding: "8px 10px", fontSize: 12, borderRadius: 8, border: "1px solid #27272a", background: "transparent", color: "#e4e4e7", outline: "none", fontFamily: "monospace", flex: 1 };
+const keyStyle: React.CSSProperties = { fontSize: 12, color: "#71717a", fontFamily: "monospace", width: 32 };
+
 export default function SpacingTokens() {
-  const { t } = useI18n();
   const [store, setStore] = useState(createDefaultStore);
 
-  const updateSpacing = (key: string, val: string) => {
-    setStore((s) => ({ ...s, spacing: { ...s.spacing, [key]: val } }));
-  };
-  const updateShadow = (key: string, val: string) => {
-    setStore((s) => ({ ...s, shadows: { ...s.shadows, [key]: val } }));
-  };
-  const updateRadius = (key: string, val: string) => {
-    setStore((s) => ({ ...s, borderRadius: { ...s.borderRadius, [key]: val } }));
-  };
+  const uSpacing = (k: string, v: string) => setStore((s) => ({ ...s, spacing: { ...s.spacing, [k]: v } }));
+  const uShadow = (k: string, v: string) => setStore((s) => ({ ...s, shadows: { ...s.shadows, [k]: v } }));
+  const uRadius = (k: string, v: string) => setStore((s) => ({ ...s, borderRadius: { ...s.borderRadius, [k]: v } }));
 
-  const section = (label: string, items: Record<string, string>, onUpdate: (k: string, v: string) => void) => (
-    <div className="space-y-2">
-      <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">{label}</h3>
-      <div className="space-y-1.5">
-        {Object.entries(items).map(([k, v]) => (
-          <div key={k} className="flex items-center gap-3">
-            <span className="w-8 text-xs font-mono text-zinc-500 dark:text-zinc-400">{k}</span>
-            <input value={v}
-              onChange={(e) => onUpdate(k, e.target.value)}
-              className="flex-1 px-2.5 py-1.5 text-xs font-mono rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800/50 text-zinc-700 dark:text-zinc-300 focus:outline-none focus:border-indigo-400" />
+  return (
+    <div style={{ maxWidth: 720, margin: "0 auto", padding: 48 }}>
+      <h1 style={{ fontSize: 22, fontWeight: 300, color: "#f4f4f5", margin: "0 0 4px" }}>Spacing & Effects</h1>
+      <p style={{ fontSize: 12, color: "#71717a", margin: "0 0 32px" }}>Spacing system, shadow elevations, corner radii</p>
+
+      {/* Spacing */}
+      <div style={cardStyle}>
+        <div style={labelStyle}>Spacing</div>
+        {Object.entries(store.spacing).map(([k, v]) => (
+          <div key={k} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+            <span style={keyStyle}>{k}</span>
+            <input value={v} onChange={(e) => uSpacing(k, e.target.value)} style={inputStyle} />
           </div>
         ))}
       </div>
-    </div>
-  );
 
-  return (
-    <div className="max-w-3xl mx-auto px-6 py-10">
-      <div className="mb-8">
-        <h1 className="text-2xl font-light tracking-tight text-zinc-900 dark:text-zinc-100 mb-1">{t.spacing.title}</h1>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">{t.spacing.desc}</p>
+      {/* Shadows */}
+      <div style={cardStyle}>
+        <div style={labelStyle}>Shadows</div>
+        {Object.entries(store.shadows).map(([k, v]) => (
+          <div key={k} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+            <span style={keyStyle}>{k}</span>
+            <input value={v} onChange={(e) => uShadow(k, e.target.value)} style={inputStyle} />
+          </div>
+        ))}
+        <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
+          {Object.entries(store.shadows).map(([k, v]) => (
+            <div key={k} style={{ flex: 1, padding: 16, borderRadius: 12, background: "#1e1e2e", textAlign: "center", boxShadow: v }}>
+              <span style={{ fontSize: 10, color: "#71717a", fontFamily: "monospace" }}>{k}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <div className="space-y-8">
-        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6">
-          {section(t.spacing.spacing, store.spacing, updateSpacing)}
-        </div>
-
-        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6">
-          {section(t.spacing.shadows, store.shadows, updateShadow)}
-          <div className="mt-4 flex gap-3">
-            {Object.entries(SHADOW_PREVIEWS).map(([k, v]) => (
-              <div key={k} className="flex-1 p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800 text-center" style={{ boxShadow: v }}>
-                <span className="text-[10px] font-mono text-zinc-400">{k}</span>
-              </div>
-            ))}
+      {/* Border Radius */}
+      <div style={cardStyle}>
+        <div style={labelStyle}>Border Radius</div>
+        {Object.entries(store.borderRadius).map(([k, v]) => (
+          <div key={k} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+            <span style={keyStyle}>{k}</span>
+            <input value={v} onChange={(e) => uRadius(k, e.target.value)} style={inputStyle} />
           </div>
-        </div>
-
-        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6">
-          {section(t.spacing.radius, store.borderRadius, updateRadius)}
-          <div className="mt-4 flex gap-3">
-            {Object.entries(store.borderRadius).map(([k, v]) => (
-              <div key={k} className="w-12 h-12 bg-indigo-500 rounded-lg flex items-center justify-center" style={{ borderRadius: v }}>
-                <span className="text-[8px] text-white font-mono">{k}</span>
-              </div>
-            ))}
-          </div>
+        ))}
+        <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
+          {Object.entries(store.borderRadius).map(([k, v]) => (
+            <div key={k} style={{ width: 40, height: 40, background: "#6366f1", borderRadius: v, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ fontSize: 8, color: "#fff", fontFamily: "monospace" }}>{k}</span>
+            </div>
+          ))}
         </div>
       </div>
     </div>

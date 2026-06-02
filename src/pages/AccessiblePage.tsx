@@ -1,130 +1,105 @@
 import { useState, useMemo } from "react";
 import { createDefaultStore } from "../data/tokens";
-import { useI18n } from "../i18n/index";
 
 function luminance(hex: string): number {
   const h = hex.replace("#", "");
   const [r, g, b] = [h.slice(0, 2), h.slice(2, 4), h.slice(4, 6)].map((c) => {
     const v = parseInt(c, 16) / 255;
-    return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
   });
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 
-function contrastRatio(hex1: string, hex2: string): number {
-  const l1 = luminance(hex1);
-  const l2 = luminance(hex2);
-  const lighter = Math.max(l1, l2);
-  const darker = Math.min(l1, l2);
-  return (lighter + 0.05) / (darker + 0.05);
+function ratio(hex1: string, hex2: string): number {
+  const l1 = luminance(hex1), l2 = luminance(hex2);
+  return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
 }
 
-function wcagGrade(ratio: number): { aa: boolean; aaa: boolean } {
-  return { aa: ratio >= 4.5, aaa: ratio >= 7 };
-}
-
-const CVD_FILTERS: Record<string, string> = {
-  protanopia: "grayscale(0) sepia(0) hue-rotate(0deg)",
-  deuteranopia: "grayscale(0) sepia(0) hue-rotate(180deg)",
-  tritanopia: "grayscale(0) sepia(0) hue-rotate(90deg)",
-  achromatopsia: "grayscale(1)",
+const CVD: Record<string, string> = {
+  protanopia: "url(#none)", deuteranopia: "saturate(0) hue-rotate(180deg)",
+  tritanopia: "saturate(0) hue-rotate(90deg)", achromatopsia: "grayscale(1)",
 };
 
 export default function AccessiblePage() {
-  const { t } = useI18n();
   const [store] = useState(createDefaultStore);
-  const [fg, setFg] = useState(store.colors[6].lightValue); // text
-  const [bg, setBg] = useState(store.colors[4].lightValue); // surface
+  const [fg, setFg] = useState(store.colors[6].lightValue);
+  const [bg, setBg] = useState(store.colors[4].lightValue);
   const [cvd, setCvd] = useState("none");
-
-  const ratio = contrastRatio(fg, bg);
-  const grade = wcagGrade(ratio);
-  const filter = CVD_FILTERS[cvd] ?? "none";
+  const r = ratio(fg, bg);
+  const aa = r >= 4.5, aaa = r >= 7;
 
   const pairs = useMemo(() =>
     [store.colors[6], store.colors[9], store.colors[10], store.colors[11]].map((c) => ({
-      name: c.name,
-      fg: c.lightValue,
-      ratio: contrastRatio(c.lightValue, bg),
-    }))
-  , [bg, store.colors]);
+      name: c.name, fg: c.lightValue, r: ratio(c.lightValue, bg),
+    })), [bg, store.colors]);
+
+  const card: React.CSSProperties = { borderRadius: 16, border: "1px solid #27272a", padding: 24, background: "linear-gradient(135deg, #18181b, #1e1e2e)" };
+  const inp: React.CSSProperties = { width: "100%", padding: "8px 10px", fontSize: 12, borderRadius: 8, border: "1px solid #27272a", background: "transparent", color: "#e4e4e7", outline: "none", fontFamily: "monospace", boxSizing: "border-box" };
+  const badge = (pass: boolean) => ({ padding: "2px 8px", borderRadius: 4, fontSize: 10, fontWeight: 600, background: pass ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)", color: pass ? "#4ade80" : "#f87171" });
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10">
-      <div className="mb-8">
-        <h1 className="text-2xl font-light tracking-tight text-zinc-900 dark:text-zinc-100 mb-1">{t.accessible.title}</h1>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">{t.accessible.desc}</p>
-      </div>
+    <div style={{ maxWidth: 900, margin: "0 auto", padding: 48 }}>
+      <h1 style={{ fontSize: 22, fontWeight: 300, color: "#f4f4f5", margin: "0 0 4px" }}>Accessibility</h1>
+      <p style={{ fontSize: 12, color: "#71717a", margin: "0 0 32px" }}>Contrast check · Color vision deficiency · Palette audit</p>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         {/* Contrast checker */}
-        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 space-y-4">
-          <div className="flex gap-3">
-            <div className="flex-1">
-              <label className="text-[10px] text-zinc-400 block mb-1">{t.accessible.fgLabel}</label>
-              <input value={fg} onChange={(e) => setFg(e.target.value)}
-                className="w-full px-3 py-2 text-sm font-mono rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 focus:outline-none focus:border-indigo-400" />
+        <div style={card}>
+          <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 10, color: "#52525b", marginBottom: 4 }}>Foreground</div>
+              <input value={fg} onChange={(e) => setFg(e.target.value)} style={inp} />
             </div>
-            <div className="flex-1">
-              <label className="text-[10px] text-zinc-400 block mb-1">{t.accessible.bgLabel}</label>
-              <input value={bg} onChange={(e) => setBg(e.target.value)}
-                className="w-full px-3 py-2 text-sm font-mono rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 focus:outline-none focus:border-indigo-400" />
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 10, color: "#52525b", marginBottom: 4 }}>Background</div>
+              <input value={bg} onChange={(e) => setBg(e.target.value)} style={inp} />
             </div>
           </div>
-
           {/* Preview */}
-          <div className="p-8 rounded-xl text-center transition-all" style={{ background: bg, filter }}>
-            <p className="text-lg font-semibold" style={{ color: fg }}>The quick brown fox</p>
-            <p className="text-sm mt-1" style={{ color: fg }}>Design is not decoration. It is communication.</p>
+          <div style={{ padding: 32, borderRadius: 12, textAlign: "center", background: bg, filter: CVD[cvd] || "none", marginBottom: 16 }}>
+            <p style={{ fontSize: 18, fontWeight: 600, color: fg, margin: 0 }}>The quick brown fox</p>
+            <p style={{ fontSize: 13, color: fg, margin: "4px 0 0", opacity: 0.7 }}>Design is not decoration. It is communication.</p>
           </div>
-
           {/* Scores */}
-          <div className="flex gap-3">
-            <Badge label={t.accessible.wcagAA} pass={grade.aa} value={ratio.toFixed(1)} threshold="≥ 4.5" />
-            <Badge label={t.accessible.wcagAAA} pass={grade.aaa} value={ratio.toFixed(1)} threshold="≥ 7" />
+          <div style={{ display: "flex", gap: 8 }}>
+            <div style={{ flex: 1, padding: 12, borderRadius: 12, textAlign: "center", background: aa ? "rgba(34,197,94,0.08)" : "rgba(239,68,68,0.08)", border: `1px solid ${aa ? "rgba(34,197,94,0.2)" : "rgba(239,68,68,0.2)"}` }}>
+              <div style={{ fontSize: 20, fontWeight: 700, color: aa ? "#4ade80" : "#f87171", fontFamily: "monospace" }}>{r.toFixed(1)}</div>
+              <div style={{ fontSize: 11, color: "#71717a", marginTop: 2 }}>AA <span style={{ color: "#52525b" }}>≥ 4.5</span></div>
+              <div style={badge(aa)}>{aa ? "PASS" : "FAIL"}</div>
+            </div>
+            <div style={{ flex: 1, padding: 12, borderRadius: 12, textAlign: "center", background: aaa ? "rgba(34,197,94,0.08)" : "rgba(239,68,68,0.08)", border: `1px solid ${aaa ? "rgba(34,197,94,0.2)" : "rgba(239,68,68,0.2)"}` }}>
+              <div style={{ fontSize: 20, fontWeight: 700, color: aaa ? "#4ade80" : "#f87171", fontFamily: "monospace" }}>{r.toFixed(1)}</div>
+              <div style={{ fontSize: 11, color: "#71717a", marginTop: 2 }}>AAA <span style={{ color: "#52525b" }}>≥ 7</span></div>
+              <div style={badge(aaa)}>{aaa ? "PASS" : "FAIL"}</div>
+            </div>
           </div>
-
-          {/* CVD sim */}
-          <div>
-            <label className="text-[10px] text-zinc-400 block mb-1">{t.accessible.cvdSim}</label>
-            <select value={cvd} onChange={(e) => setCvd(e.target.value)}
-              className="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 focus:outline-none focus:border-indigo-400">
+          {/* CVD */}
+          <div style={{ marginTop: 12 }}>
+            <select value={cvd} onChange={(e) => setCvd(e.target.value)} style={{ ...inp, width: "auto" }}>
               <option value="none">Normal vision</option>
-              {Object.keys(CVD_FILTERS).map((k) => <option key={k} value={k}>{k}</option>)}
+              {Object.keys(CVD).map((k) => <option key={k} value={k}>{k}</option>)}
             </select>
           </div>
         </div>
 
         {/* Palette audit */}
-        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6">
-          <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-3">Palette Contrast Audit</h3>
-          <div className="space-y-1.5">
-            {pairs.map((p) => {
-              const g = wcagGrade(p.ratio);
-              return (
-                <div key={p.name} className="flex items-center justify-between py-2 px-3 rounded-lg bg-zinc-50 dark:bg-zinc-800/50">
-                  <span className="text-xs font-mono text-zinc-600 dark:text-zinc-400">{p.name}</span>
-                  <div className="flex gap-2">
-                    <span className="text-xs font-mono tabular-nums text-zinc-500">{p.ratio.toFixed(1)}</span>
-                    <span className={`text-[9px] px-1.5 py-0.5 rounded font-medium ${g.aa ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-700"}`}>AA</span>
-                    <span className={`text-[9px] px-1.5 py-0.5 rounded font-medium ${g.aaa ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-700"}`}>AAA</span>
-                  </div>
+        <div style={card}>
+          <div style={{ fontSize: 10, fontWeight: 600, color: "#52525b", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12 }}>Palette Audit vs Background</div>
+          {pairs.map((p) => {
+            const pa = p.r >= 4.5, paaa = p.r >= 7;
+            return (
+              <div key={p.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 12px", borderRadius: 8, background: "rgba(255,255,255,0.02)", marginBottom: 4 }}>
+                <span style={{ fontSize: 12, color: "#e4e4e7", fontFamily: "monospace" }}>{p.name}</span>
+                <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                  <span style={{ fontSize: 12, color: "#71717a", fontFamily: "monospace" }}>{p.r.toFixed(1)}</span>
+                  <span style={badge(pa)}>AA</span>
+                  <span style={badge(paaa)}>AAA</span>
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            );
+          })}
         </div>
       </div>
-    </div>
-  );
-}
-
-function Badge({ label, pass, value, threshold }: { label: string; pass: boolean; value: string; threshold: string }) {
-  return (
-    <div className={`flex-1 p-3 rounded-xl text-center ${pass ? "bg-emerald-50 dark:bg-emerald-500/5 border border-emerald-200 dark:border-emerald-800" : "bg-rose-50 dark:bg-rose-500/5 border border-rose-200 dark:border-rose-800"}`}>
-      <div className={`text-lg font-bold font-mono ${pass ? "text-emerald-600" : "text-rose-600"}`}>{value}</div>
-      <div className="text-[10px] text-zinc-500 mt-0.5">{label} <span className="text-zinc-400">{threshold}</span></div>
-      <div className={`text-[11px] font-medium mt-1 ${pass ? "text-emerald-600" : "text-rose-600"}`}>{pass ? "PASS" : "FAIL"}</div>
     </div>
   );
 }
