@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { useI18n } from "./i18n/index";
 
@@ -14,8 +13,6 @@ export default function App() {
   const { locale, t, setLocale, available } = useI18n();
   const loc = useLocation();
   const isHome = loc.pathname === "/";
-  const [, setDark] = useState(() => localStorage.getItem("token-studio-theme") === "dark");
-
   return (
     <div style={{ minHeight: "100vh", background: "#09090b", fontFamily: "system-ui, sans-serif" }}>
       <header style={{
